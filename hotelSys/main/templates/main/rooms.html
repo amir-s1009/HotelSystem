@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/table.css' %}">
+        <link rel="stylesheet" href="{% static 'main/popup.css' %}">
+        <link rel="stylesheet" href="{% static 'main/signup.css' %}">
+        <style>
+            body{
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                width: 100vw;
+                overflow-y: scroll;
+            }
+
+            form{
+                display: flex;
+                flex-direction: row;
+                width: 98%;
+                height: fit-content;
+                direction: rtl;
+                margin-bottom: 50px;
+            }
+            form div label{
+                color: aquamarine;
+            }
+            form div{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+
+            }
+            form input{
+                height: 30px;
+            }
+
+        </style>
+    </head>
+    <body>
+        {% if meaasages %}
+            {% for message in messages %}
+                <script>
+                    window.addEventListener("load", ()=> showMessage("{{message}}", "white", "{{message.tage}}".includes("success")?"green":"red", "17", 3000));
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'rooms' %}" method="post">
+            {% csrf_token %}
+            <input placeholder="شماره اتاق" name="no" type="text" style="flex: 1;"/>
+            <input placeholder="ظرفیت" name="capacity" type="text" style="flex: 1;"/>
+            <div style="flex: 2;">
+                <label for="classA">کلاس A</label>
+                <input id="classA" name="ecoclass" type="radio" value="0"/>
+                <label for="classB">کلاس B</label>
+                <input id="classB" name="ecoclass" type="radio" value="1"/>
+                <label for="classC">کلاس C</label>
+                <input id="classC" name="ecoclass" type="radio" value="2"/>
+            </div>
+            <input placeholder="تعداد تخت" name="beds" type="text" style="flex: 1;"/>
+            <input type="submit" value="ثبت اتاق" style="flex: 1; background-color:green; color:white; cursor:pointer; height:100%">
+        </form>
+        <table>
+            <tr>
+                <th>شماره اتاق</th>
+                <th>ظرفیت</th>
+                <th>وضعیت</th>
+                <th>کلاس اقتصادی</th>
+                <th>تعداد تخت</th>
+                <th>مدیریت</th>
+            </tr>
+            {% for room in rooms %}
+                <tr>
+                    <td id="no">{{room.no}}</td>
+                    <td id="capacity">{{room.capacity}}</td>
+                    <td id="isIdle">
+                        {% if room.isIdle %}
+                            آزاد
+                        {% else %}
+                            مشغول
+                        {% endif %}
+                    </td>
+                    <td id="ecoclass">
+                        {% if room.ecoclass == 0 %}
+                            کلاس A
+                        {% elif room.ecoclass == 1 %}
+                            کلاس B
+                        {% elif room.ecoclass == 2 %}
+                            کلاس C
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
+                    <td id="beds">{{room.beds}}</td>
+                    <td>
+                        <a href="{% url 'deleteRoom' room.no %}"><button id="delete">حذف</button></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+    {% load static %}
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

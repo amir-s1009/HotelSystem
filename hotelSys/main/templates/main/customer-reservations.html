@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/table.css' %}">
+        <link rel="stylesheet" href="{% static  'main/popup.css' %}">
+    </head>
+    <body>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    window.addEventListener("load", ()=> showMessage("{{message}}", "white", "{{message.tage}}".includes("success")?"green":"red", "17", 3000));
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <table>
+            <tr>
+                <th>شماره رزرو</th>
+                <th>تاریخ و ساعت شروع</th>
+                <th>مدت زمان به ساعت</th>
+                <th>وضعیت</th>
+                <th>امتیاز</th>
+                <th>اتاق</th>
+            </tr>
+            {% load json %}
+            {% for reserve in reserves %}
+                <tr>
+                    <td>{{reserve.id}}</td>
+                    <td>{{reserve.start}}</td>
+                    <td>{{reserve.duration}}</td>
+                    <td>
+                        {% if reserve.isActive %}
+                            فعال
+                        {% else %}
+                            غیر فعال
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if reserve.score %}
+                            {{reserve.score}} از 5
+                        {% else %}
+                            امتیاز داده نشده
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="roomInfo" onclick="viewRoom('{{reserve.room.no}}', '{{reserve.room.capacity}}', '{{reserve.room.isIdle}}', '{{reserve.room.ecoclass}}')">اطلاعات اتاق</button>
+                    </td>
+                    {% if not reserve.score %}
+                        <td>
+                            <button onclick="">امتیازدهی</button>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+    <script>
+    </script>
+    {% load static %}
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

@@ -1,0 +1,61 @@
+body{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    direction: rtl;
+    flex-wrap: wrap;
+    padding: 50px 50px;
+}
+.card{
+    width: 200px;
+    min-height: 300px;
+    padding: 10px;
+    margin-left: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    background-color: white;
+    border-radius: 15px;
+}
+.card h1{
+    font-size: 32px;
+    color: #151515;
+    font-weight: 900;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #151515;
+    border-radius: 50%;
+    text-align: center;
+}
+.card h3{
+    font-size: 22px;
+    color: rgb(78, 78, 78);
+    font-weight: 200;
+}
+.card span{
+    font-size: 17px;
+    color: green;
+    font-weight: 900;
+}
+.card a{
+    border: 1px solid green;
+    background-color: white;
+    font-size: 16px;
+    font-weight: 500;
+    width: 60%;
+    margin-top: 40px;
+    padding: 5px 0px;
+    color: #151515;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.5s;
+    text-align: center;
+    border-radius: 40px;
+}
+.card a:hover{
+    background-color: green;
+    color: white;
+}

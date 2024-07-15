@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/signup.css' %}">
+        <link rel="stylesheet" href="{% static 'main/popup.css' %}">
+    </head>
+    <body>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    window.addEventListener("load", ()=> showMessage("{{message}}", "white", "{{message.tags}}".includes("success")?"green":"red", "17", 3000))
+                    
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'updateCustomerInfo' %}" method="post">
+            {% csrf_token %}
+            <input class="entry" name="username" id="username" placeholder="نام کاربری فعلی" type="text" value="{{user.username}}"/>
+            <input class="entry" name="password" id="password" placeholder="رمزعبور فعلی" type="text" value="{{user.password}}"/>
+            <input class="entry" name="newUsername" id="newUsername" placeholder="نام کاربری جدید" type="text" value="{{user.username}}"/>
+            <input class="entry" name="newPassword" id="newPassword" placeholder="رمزعبور جدید" type="text" value="{{user.password}}"/>
+            <input class="entry" name="name" id="name" placeholder="نام" type="text" value="{{user.name}}"/>
+            <input class="entry" name="family" id="family" placeholder="نام خانوادگی" type="text" value="{{user.family}}"/>
+            <input class="entry" name="mobile" id="mobile" placeholder="موبایل" type="text" value="{{user.mobile}}"/>
+            <input class="entry" name="nationalId" id="nationalId" placeholder="کدملّی" type="text" value="{{user.nationalId}}"/>
+            <input class="entry" name="email" id="email" placeholder="پست الکترونیکی" type="email" value="{{user.email}}"/>
+            <input class="button" type="submit" value="ثبت تغییرات"/>
+        </form>
+    </body>
+    {% load static %}
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

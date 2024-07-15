@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/table.css' %}">
+        <link rel="stylesheet" href="{% static 'main/popup.css' %}">
+    </head>
+    <body>
+
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    window.addEventListener("load", ()=> showMessage("{{message}}", "white", "{{message.tage}}".includes("success")?"green":"red", "17", 3000));
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <table>
+            {% for reserve in reservations %}
+                <tr>
+                    <td>{{reserve.start}}</td>
+                    <td>{{reserve.duration}}</td>
+                    <td>
+                        {% if reserve.isActive %}
+                            فعال
+                        {% else %}
+                            غیرفعال
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if score %}
+                            {{reserve.score}}
+                        {% else %}
+                            --
+                        {% endif %}    
+                    </td>
+                    <td>{{reserve.room.no}}</td>
+                    <button>اطلاعات مشتری</button>
+                    {% if reserve.isActive %}
+                        <a href="{% url deleteReservation reserve.id %}"><button>ابطال رزرو</button></a>
+                    {% else %}
+                        <a href="{% url deleteReservation reserve.id %}"><button>تایید رزرو</button></a>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+    {% load static %}
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

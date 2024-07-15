@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/signup.css' %}">
+        <link rel="stylesheet" href="{% static 'main/popup.css' %}">
+    </head>
+    <body>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    window.addEventListener("load", ()=> showMessage("{{message}}", "white", "{{message.tage}}".includes("success")?"green":"red", "17", 3000));
+                </script>
+            {% endfor %}
+        {% endif %}
+        <form action="{% url 'createUser' %}" method="post">
+            {% csrf_token %}
+            <input class="entry" type="text" placeholder="نام" name="name"/>
+            <input class="entry" type="text" placeholder="نام خانوادگی" name="family"/>
+            <input class="entry" type="text" placeholder="نام کاربری" name="username"/>
+            <input class="entry" type="password" placeholder="رمز عبور" name="password"/>
+            <input class="entry" type="password" placeholder="تکرار رمز عبور" name="repeatpassword"/>
+            <input class="entry" type="text" placeholder="شماره موبایل" name="mobile"/>
+            <input class="entry" type="text" placeholder="کد ملی" name="nationalId"/>
+            <input class="entry" type="email" placeholder="پست الکترونیکی" name="email"/>
+            <input class="button" type="submit" value="ثبت نام"/>
+        </form>
+    </body>
+    {% load static %}
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

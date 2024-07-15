@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/login.css' %}"/>
+        <link rel="stylesheet" href="{% static 'main/popup.css' %}"/>
+    </head>
+<body>
+    
+    {% block default_messages %}
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                
+                window.addEventListener("load", ()=> showMessage("{{message}}", "white", "red", "17px", 3000))
+            </script>
+        {% endfor %}
+    {% endif %}
+    {% endblock default_messages %}
+    
+    <form action='{% url "validateUser" %}' method="post">
+        {% csrf_token %}
+        <input class="entry" type="text" placeholder="نام کاربری" name="username" onchange="inputhandler(this)"/>
+        <input class="entry" type="password" placeholder="رمز عبور" name="password" onchange="inputhandler(this)"/>
+        <div class="radioDiv">
+            <div>
+                <label class="radioLabel" for="customer">مشتری</label>
+                <input type="radio" name="userType" id="customer" value="0" checked/>
+            </div>
+
+            <div>
+                <label class="radioLabel" for="hotel">هتل</label>
+            <input type="radio" name="userType" id="hotel" value="1"/>
+            </div>
+        </div>
+        <input class="button" type="submit" value="ورود">
+        <br/>
+        <a href="{% url 'signupPage' %}">هنوز ثبت نام نکرده اید؟</a>
+    </form>
+</body>
+<script>
+    function inputhandler(entry){
+        if(entry.value != "")
+        entry.style.border = "3px solid green";
+        else
+        entry.style.border = "3px solid red";
+    }
+</script>
+{% load static %}
+<script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

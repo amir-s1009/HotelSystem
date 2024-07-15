@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/card.css' %}">
+        <link rel="stylesheet" href="{% static 'main/popup.css' %}">
+    </head>
+    <body>
+
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    window.addEventListener("load", ()=> showMessage("{{message}}", "white", "{{message.tage}}".includes("success")?"green":"red", "17", 3000));
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'customer-filter-rooms' username=user.username password=user.password%}" method="post">
+            {% csrf_token %}
+            <input type="text" placeholder="شروع اقامت را تنظیم کنید" name="startDate"/>
+            <input type="text" placeholder="تعداد روز های اقامت را وارد کنید" name="endDate"/>
+            <input type="submit" value="جستجو"/>
+        </form>
+
+        {% for room in rooms %}
+            <div class="card">
+                <h1>{{room.capacity}}</h1>
+                <h3>{{room.no}}</h3>
+                <span>
+                    {% if room.isIdle %}
+                        قابل رزرو
+                    {% else %}
+                        مشغول
+                    {% endif %}
+                </span>
+                <span>
+                    {% if room.ecoclass == 0 %}
+                        کلاس A
+                    {% elif room.ecoclass == 1 %}
+                        کلاس B
+                    {% elif room.ecoclass == 2 %}
+                        کلاس C
+                    {% else %}
+                        --
+                    {% endif %}
+                </span>
+                <a href="{% url 'customer-reserve' room.id user.username user.password %}">رزرو</a>
+            </div>
+        {% endfor %}
+    </body>
+    {% load static %}
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+</html>

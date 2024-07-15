@@ -1,0 +1,38 @@
+body{
+    width: 100%;
+    height: 100%;
+    display: table;
+}
+
+table{
+    direction: rtl;
+    width: 100%;
+}
+table tr{
+    width: 100%;
+    margin-bottom: 10px;
+}
+table th{
+    text-align: center;
+    font-size: 16px;
+    background-color: gray;
+    color: white;
+}
+table td{
+    text-align: center;
+    font-size: 16px;
+    background-color: white;
+    color: #313131;
+}
+table td button,a{
+    width: 90%;
+    background-color: #151515;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+table td button:hover{
+    background-color: white;
+    color: #151515;
+}
