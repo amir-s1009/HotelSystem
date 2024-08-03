@@ -4,6 +4,30 @@
         {% load static %}
         <link rel="stylesheet" href="{% static 'main/card.css' %}">
         <link rel="stylesheet" href="{% static 'main/popup.css' %}">
+        <style>
+            body{
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                direction: rtl;
+            }
+            form{
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                margin-bottom: 50px;
+                width: 60%;
+                height: 30px;
+            }
+            form input{
+                flex: 1;
+                height: 100%;
+                direction: rtl;
+                margin-left: 10px;
+            }
+        </style>
     </head>
     <body>
 
@@ -15,13 +39,16 @@
             {% endfor %}
         {% endif %}
 
-        <form action="{% url 'customer-filter-rooms' username=user.username password=user.password%}" method="post">
+        <form action="{% url 'customer-filter-rooms' user.username user.password %}" method="post">
             {% csrf_token %}
-            <input type="text" placeholder="شروع اقامت را تنظیم کنید" name="startDate"/>
-            <input type="text" placeholder="تعداد روز های اقامت را وارد کنید" name="endDate"/>
-            <input type="submit" value="جستجو"/>
+            <input type="date" placeholder="تاریخ شروع اقامت را تنظیم کنید" name="startDate"/>
+            <input type="time" placeholder="ساعت شروع اقامت را تنظیم کنید" name="startTime"/>
+            <input type="date" placeholder="تاریخ پایان اقامت را تنظیم کنید" name="endDate"/>
+            <input type="time" placeholder="ساعت پایان اقامت را تنظیم کنید" name="endTime"/>
+            <input type="submit" value="جستجو" style="background-color: orangered; color:white; cursor:pointer; flex:0.5; height:35px"/>
         </form>
-
+        
+        <div id="body">
         {% for room in rooms %}
             <div class="card">
                 <h1>{{room.capacity}}</h1>
@@ -44,10 +71,11 @@
                         --
                     {% endif %}
                 </span>
-                <a href="{% url 'customer-reserve' room.id user.username user.password %}">رزرو</a>
+                <a href="{% url 'customer-reserve' room.id datetime.sd datetime.st datetime.ed datetime.et user.username user.password %}" >رزرو</a> 
             </div>
         {% endfor %}
+        </div>
     </body>
     {% load static %}
-    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>
+    <script src="{% static 'main/script/popup.js' %}" type="text/javascript" defer></script>   
 </html>

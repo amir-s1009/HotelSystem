@@ -48,7 +48,7 @@
             {% endfor %}
         {% endif %}
 
-        <form action="{% url 'rooms' %}" method="post">
+        <form action="{% url 'addRoom' admin.username admin.password %}" method="post">
             {% csrf_token %}
             <input placeholder="شماره اتاق" name="no" type="text" style="flex: 1;"/>
             <input placeholder="ظرفیت" name="capacity" type="text" style="flex: 1;"/>
@@ -61,7 +61,7 @@
                 <input id="classC" name="ecoclass" type="radio" value="2"/>
             </div>
             <input placeholder="تعداد تخت" name="beds" type="text" style="flex: 1;"/>
-            <input type="submit" value="ثبت اتاق" style="flex: 1; background-color:green; color:white; cursor:pointer; height:100%">
+            <input id="submit" type="submit" value="ثبت اتاق" style="flex: 1; background-color:green; color:white; cursor:pointer; height:100%; transition:0.4s">
         </form>
         <table>
             <tr>
@@ -96,7 +96,7 @@
                     </td>
                     <td id="beds">{{room.beds}}</td>
                     <td>
-                        <a href="{% url 'deleteRoom' room.no %}"><button id="delete">حذف</button></a>
+                        <a href="{% url 'deleteRoom' room.no admin.username admin.password %}"><button id="delete">حذف</button></a>
                     </td>
                 </tr>
             {% endfor %}

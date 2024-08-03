@@ -16,10 +16,17 @@
         {% endif %}
 
         <table>
+            <tr>
+                <th>تاریخ و ساعت شروع</th>
+                <th>تاریخ و ساعت اتمام</th>
+                <th>وضعیت</th>
+                <th>امتیاز</th>
+                <th>شماره اتاق</th>
+            </tr>
             {% for reserve in reservations %}
                 <tr>
-                    <td>{{reserve.start}}</td>
-                    <td>{{reserve.duration}}</td>
+                    <td>{{reserve.startDate}} {{reserve.startTime}}</td>
+                    <td>{{reserve.endDate}} {{reserve.endTime}}</td>
                     <td>
                         {% if reserve.isActive %}
                             فعال
@@ -35,11 +42,11 @@
                         {% endif %}    
                     </td>
                     <td>{{reserve.room.no}}</td>
-                    <button>اطلاعات مشتری</button>
+                    <td><button onclick="viewCustomer('{{reserve.customer.name}}', '{{reserve.customer.family}}', '{{reserve.customer.nationalId}}', '{{reserve.customer.email}}')">اطلاعات مشتری</button></td>
                     {% if reserve.isActive %}
-                        <a href="{% url deleteReservation reserve.id %}"><button>ابطال رزرو</button></a>
+                        <td><a href="{% url 'deleteReservation' reserve.id admin.username admin.password %}"><button>اتمام رزرو</button></a></td>
                     {% else %}
-                        <a href="{% url deleteReservation reserve.id %}"><button>تایید رزرو</button></a>
+                        <td><a href="{% url 'acceptReservation' reserve.id admin.username admin.password %}"><button>شروع رزرو</button></a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

@@ -56,12 +56,13 @@
 .item{
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     width: 60%;
     height: 80px;
     margin-top: 40px;
     direction: rtl;
+    border-bottom: 1px solid white;
 }
 .label{
     font-size: 16px;

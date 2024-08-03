@@ -66,6 +66,37 @@ function viewRoom(no, capacity, isIdle, ecoclass){
     frame.addEventListener("click", () => fadeOut(frame));
 }
 
+function viewCustomer(name, family, nationalId, email){
+    let frame = document.createElement("div");
+    frame.id = "background";
+
+    frame.innerHTML = `
+        <div id="popupframe">
+        <div id="closeBox">
+            <button id="closeBtn">X</button>
+        </div>
+        <div id="container">
+            <div class="item">
+                <span class="label">نام و نام خانوادگی:</span>
+                <span class="info">${name} ${family}</span>
+            </div>
+            <div class="item">
+                <span class="label">ظرفیت اتاق:</span>
+                <span class="info">${nationalId}</span>
+            </div>
+            <div class="item">
+                <span class="label">پست الکترونیکی:</span>
+                <span class="info">${email}</span>
+            </div>
+        </div>
+        </div>
+    `;
+
+    fadeIn(frame);
+    document.getElementById("closeBtn").addEventListener("click", ()=> fadeOut(frame));
+    frame.addEventListener("click", () => fadeOut(frame));
+}
+
 function rateReserve(username, password, id){
     let frame = document.createElement("div");
     frame.id = "background";
@@ -76,7 +107,7 @@ function rateReserve(username, password, id){
                 <button id="closeBtn">X</button>
             </div>
             <div id="container">
-                <form action="{% url 'scoreReservation' ${username} ${password} ${id} %}" method="post">
+                <form action="http://localhost:8080/main/customer/reservations/${username}/${password}/${id}" method="post">
                     <div id="item">
                         <label for="1">ضعیف</label>
                         <input type="radio" id="1" name="rate" value="1"/>
@@ -104,7 +135,6 @@ function rateReserve(username, password, id){
     `;
     fadeIn(frame);
     document.getElementById("closeBtn").addEventListener("click", ()=> fadeOut(frame));
-    frame.addEventListener("click", () => fadeOut(frame));
 }
 
 function showMessage(text, fgcolor, bgcolor, fontsize, timeout){

@@ -1,5 +1,4 @@
 from django.db import models
-import json
 
 class Customer(models.Model):
     username = models.CharField(max_length=30, null=True)
@@ -25,9 +24,11 @@ class Room(models.Model):
 
 
 class Reservation(models.Model):
-    start = models.DateTimeField(null=True)
-    end = models.DateTimeField(null=True)
+    startDate = models.DateField(null=True)
+    startTime = models.TimeField(null=True)
+    endDate = models.DateField(null=True)
+    endTime = models.TimeField(null=True)
     isActive = models.BooleanField(default=False)
     score = models.IntegerField(null=True)
-    room = models.OneToOneField(Room, on_delete=models.CASCADE, null=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True) 

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core import serializers
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_http_methods
-from datetime import datetime
+import datetime
 
 def test(request):
     #print(Customer.objects.all())
@@ -80,7 +80,7 @@ def login(request):
     elif(userType == "1"):
         try:
             mang = manager.objects.get(username=username, password=password)
-            return render(request, "main/manager-dashboard.html", {"user":mang})
+            return render(request, "main/manager-dashboard.html", {"admin":mang})
         except manager.DoesNotExist:
             messages.error(request, "لطفا اطلاعات را درست وارد نمایید", extra_tags="f")
             return redirect("loginPage")
@@ -115,37 +115,41 @@ def updateCustomerInfo(request):
 
 @require_http_methods(["GET"])
 @xframe_options_exempt
-def managerRoomsPage(request):
-    return render(request, "main/rooms.html", {"rooms":Room.objects.all()})
+def managerRoomsPage(request, username, password):
+    if(manager.objects.get(username=username, password=password)):
+        return render(request, "main/rooms.html", {"rooms":Room.objects.all(), "admin":{"username":username, "password":password}})
 
 @require_http_methods(["POST"])
-def createRoom(request):
-    Room.objects.create(
-        no=int(request.POST["no"]),
-        capacity=int(request.POST["capacity"]),
-        beds=int(request.POST["beds"]),
-        ecoclass=int(request.POST["ecoclass"]),
-        isIdle=True,
-    )
-    messages.success(request, "اتاق جدید به شماره "+request.POST["no"]+" افزوده شد", extra_tags="s")
-    return redirect("rooms")
+def addRoom(request, username, password):
+    if manager.objects.get(username=username, password=password):
+        Room.objects.create(
+            no=int(request.POST["no"]),
+            capacity=int(request.POST["capacity"]),
+            beds=int(request.POST["beds"]),
+            ecoclass=int(request.POST["ecoclass"]),
+            isIdle=True,
+        )
+        messages.success(request, "اتاق جدید به شماره "+request.POST["no"]+" افزوده شد", extra_tags="s")
+        return redirect("rooms", username=username, password=password)
 
         
 @require_http_methods(["GET"])
-def deleteRoom(request, no):
+def deleteRoom(request, no, username, password):
     try:
-        room = Room.objects.get(no=no)
-        room.delete()
-        messages.success(request, "اتاق با موفقیت حذف گردید", extra_tags="s")
-        return redirect("rooms")
+        if manager.objects.get(username=username, password=password):
+            room = Room.objects.get(no=no)
+            room.delete()
+            messages.success(request, "اتاق با موفقیت حذف گردید", extra_tags="s")
+            return redirect("rooms", username=username, password=password)
     except Room.DoesNotExist:
         messages.error(request, "اتاق یافت نشد", "f")
-        return redirect("rooms")
+        return redirect("rooms", username=username, password=password)
 
 @require_http_methods(["GET"])
 @xframe_options_exempt
-def reservations(request):
-    return render(request, "main/manageReservation.html", {"reservations":Reservation.objects.all()})
+def reservations(request, username, password):
+    if manager.objects.get(username=username, password=password):
+        return render(request, "main/manageReservation.html", {"reservations":Reservation.objects.all(), "admin":{"username":username, "password":password}})
 
 @require_http_methods(["GET"])
 @xframe_options_exempt
@@ -155,18 +159,39 @@ def cutomerViewRooms(request, username, password):
 
 @require_http_methods(["POST"])
 @xframe_options_exempt
-def cutomerFilterRooms(request, startDate, endDate, **kwargs):
-    reservations = Reservation.objects.filter(end > startDate)
+def cutomerFilterRooms(request, username, password):
+    #date format: yyyy-mm-dd
+    #time format: hh:mm
+    sdate = request.POST["startDate"]
+    stime = request.POST["startTime"]
+    fDate = request.POST["endDate"]
+    fTime = request.POST["endTime"]
+    reservations = list(Reservation.objects.filter(
+        endDate__gt=datetime.date(int(sdate[0:3]), int(sdate[5:7]), int(sdate[8:10])),
+        endTime__gt=datetime.time(int(stime[0:2]), int(stime[3:5]))
+    ))
+    reservations = reservations+list(
+        Reservation.objects.filter(
+            startDate__gt=datetime.date(int(fDate[0:3]), int(fDate[5:7]), int(fDate[8:10])),
+            startTime__gt=datetime.time(int(fTime[0:2]), int(fTime[3:5]))
+        )
+    )   
     not_needed_rooms = []
     for reservation in reservations:
         if reservation.room not in not_needed_rooms:
             not_needed_rooms.append(reservation.room.no)
+    print(reservations)
     needed_rooms = []
     allRooms = Room.objects.all()
     for room in allRooms:
         if room.no not in not_needed_rooms:
             needed_rooms.append(room)
-    return render(request, "main/customer-reserve.html", {"rooms":needed_rooms, "user":Customer.objects.get(username=kwargs["username"], password=kwargs["password"])})
+    return render(request, "main/customer-reserve.html",
+        {
+        "rooms":needed_rooms,
+        "user":Customer.objects.get(username=username, password=password),
+        "datetime":{"sd":sdate, "st":stime, "ed":fDate, "et":fTime}
+        })
 
 @require_http_methods(["GET"])
 @xframe_options_exempt
@@ -175,12 +200,14 @@ def customerViewReservations(request, username, password):
     return render(request, "main/customer-reservations.html", {"reserves":data})
 
 @require_http_methods(["GET"])
-def customerReservation(request, roomId, username, password):
+def customerReservation(request, roomId, startDate, startTime, endDate, endTime, username, password):
     targetRoom = Room.objects.get(pk=roomId)
     targetCustomer = Customer.objects.get(username=username, password=password)
     reserve = Reservation(
-        start = None,
-        duration = None,
+        startDate = datetime.date(int(startDate[0:3]), int(startDate[5:7]), int(startDate[8:10])),
+        startTime = datetime.time(int(startTime[0:2]), int(startTime[4:6])),
+        endDate = datetime.date(int(endDate[0:3]), int(endDate[5:7]), int(endDate[8:10])),
+        endTime = datetime.time(int(endTime[0:2]), int(endTime[4:6])),
         isActive = False,
         score = None,
         room = targetRoom,
@@ -188,25 +215,29 @@ def customerReservation(request, roomId, username, password):
     )
     reserve.save()
     messages.success(request, "رزرو شما با موفقیت به شماره "+str(reserve.id)+" ثبت شد", extra_tags="s")
-    return redirect()
+    return redirect("customer-reservations", username=username, password=password)
 
 @require_http_methods(["GET"])
-def deleteReservation(request, id):
+def deleteReservation(request, id, username, password):
     reserve = Reservation.objects.get(pk=id)
     reserve.isActive = False
+    reserve.room.isIdle = True
+    reserve.room.save()
     reserve.save()
     messages.success(request, "رزرو با موفقیت ابطال شد", extra_tags="s")
-    return redirect("reservations")
+    return redirect("reservations", username=username, password=password)
 
 @require_http_methods(["GET"])
-def acceptReservation(request, id):
+def acceptReservation(request, id, username, password):
     reserve = Reservation.objects.get(pk=id)
     reserve.isActive = True
+    reserve.room.isIdle = False
+    reserve.room.save()
     reserve.save()
     messages.success(request, "رزرو با موفقیت تایید شد", extra_tags="s")
-    return redirect("reservations")
+    return redirect("reservations", username=username, password=password)
 
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def scoreReservation(request, id, username, password):
     try:
         reserve = Reservation.objects.get(customer__username=username, customer__password=password, id=id)

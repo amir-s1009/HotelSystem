@@ -18,7 +18,7 @@
             <tr>
                 <th>شماره رزرو</th>
                 <th>تاریخ و ساعت شروع</th>
-                <th>مدت زمان به ساعت</th>
+                <th>تاریخ و ساعت پایان</th>
                 <th>وضعیت</th>
                 <th>امتیاز</th>
                 <th>اتاق</th>
@@ -27,8 +27,8 @@
             {% for reserve in reserves %}
                 <tr>
                     <td>{{reserve.id}}</td>
-                    <td>{{reserve.start}}</td>
-                    <td>{{reserve.duration}}</td>
+                    <td>{{reserve.startDate}} {{reserve.startTime}}</td>
+                    <td>{{reserve.endDate}} {{reserve.endTime}}</td>
                     <td>
                         {% if reserve.isActive %}
                             فعال
@@ -48,7 +48,7 @@
                     </td>
                     {% if not reserve.score %}
                         <td>
-                            <button onclick="">امتیازدهی</button>
+                            <button onclick="rateReserve('{{user.username}}', '{{user.password}}', '{{reserve.id}}')">امتیازدهی</button>
                         </td>
                     {% endif %}
                 </tr>
